@@ -103,3 +103,12 @@ universal_data_analyzer/
 ├── requirements.txt
 ├── README.md
 └── .gitignore
+```
+## Installation
+```
+git clone https://github.com/wilson-adhikari/Universal-Data-Analyzer.git
+cd Universal-Data-Analyzer
+pip install -r requirements.txt
+
+```
+
