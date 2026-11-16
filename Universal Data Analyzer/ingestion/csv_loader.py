@@ -17,7 +17,7 @@ class CSVLoader:
         """Load CSV file with automatic separator detection"""
         try:
             if self.sep is None:
-                df = pd.read_csv(filepath, encoding=self.encoding, **kwargs)
+                df = pd.read_csv(filepath, sep=self.detect_separator(filepath), encoding=self.encoding, **kwargs)
             else:
                 df = pd.read_csv(filepath, sep=self.sep, encoding=self.encoding, **kwargs)
             
@@ -30,9 +30,13 @@ class CSVLoader:
     
     def detect_separator(self, filepath: Union[str, Path]) -> str:
         """Detect CSV separator"""
-        with open(filepath, 'r', encoding=self.encoding) as f:
-            first_line = f.readline()
-        
+        if hasattr(filepath, 'read'):  # file-like object, e.g. a Streamlit upload
+            first_line = filepath.readline().decode(self.encoding)
+            filepath.seek(0)
+        else:
+            with open(filepath, 'r', encoding=self.encoding) as f:
+                first_line = f.readline()
+
         separators = [',', ';', '\t', '|']
         for sep in separators:
             if sep in first_line:

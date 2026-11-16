@@ -49,7 +49,7 @@ class CorrelationAnalyzer:
                             'Correlation': round(corr_value, 4)
                         })
             
-            result = pd.DataFrame(corr_pairs).sort_values('Correlation', key=abs, ascending=False)
+            result = pd.DataFrame(corr_pairs, columns=['Variable1', 'Variable2', 'Correlation']).sort_values('Correlation', key=abs, ascending=False)
             logger.info(f"Found {len(result)} correlations above threshold {threshold}")
             return result
         

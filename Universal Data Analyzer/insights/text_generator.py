@@ -44,7 +44,7 @@ class InsightGenerator:
             mean_val = df[col].mean()
             std_val = df[col].std()
             
-            if std_val > 0:
+            if std_val > 0 and mean_val != 0:
                 cv = (std_val / mean_val) * 100  # Coefficient of variation
                 if cv > 100:
                     insights.append(f"Column '{col}' has high variability (CV: {cv:.1f}%)")
@@ -59,7 +59,7 @@ class InsightGenerator:
         categorical_cols = df.select_dtypes(include=['object', 'category']).columns
         for col in categorical_cols:
             unique_vals = df[col].nunique()
-            if unique_vals < 10:
+            if 0 < unique_vals < 10:
                 top_val = df[col].value_counts().index[0]
                 top_count = df[col].value_counts().values[0]
                 insights.append(f"Column '{col}': Most common value is '{top_val}' ({top_count} occurrences)")

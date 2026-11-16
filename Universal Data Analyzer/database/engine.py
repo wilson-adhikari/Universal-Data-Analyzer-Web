@@ -1,5 +1,5 @@
 """SQL Database Engine Module"""
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, select, Table, MetaData
 from typing import Optional, List
 import pandas as pd
 import logging
@@ -22,10 +22,14 @@ class DatabaseEngine:
     def load_table(self, table_name: str, limit: Optional[int] = None) -> pd.DataFrame:
         """Load table as dataframe"""
         try:
-            query = f"SELECT * FROM {table_name}"
+            if table_name not in inspect(self.engine).get_table_names():
+                raise ValueError(f"Unknown table: {table_name}")
+            if limit is not None and not isinstance(limit, int):
+                raise ValueError("limit must be an integer")
+            query = select(Table(table_name, MetaData(), autoload_with=self.engine))
             if limit:
-                query += f" LIMIT {limit}"
-            
+                query = query.limit(limit)
+
             df = pd.read_sql(query, self.engine)
             logger.info(f"Loaded table {table_name}: {len(df)} rows")
             return df

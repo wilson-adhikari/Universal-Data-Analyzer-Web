@@ -10,9 +10,11 @@ class OutlierHandler:
     """Handle outliers in numerical data"""
     
     @staticmethod
-    def remove_outliers(df: pd.DataFrame, column: str, method: str = 'iqr', threshold: float = 1.5) -> pd.DataFrame:
+    def remove_outliers(df: pd.DataFrame, column: str, method: str = 'iqr', threshold: Optional[float] = None) -> pd.DataFrame:
         """Remove outliers using specified method"""
         df = df.copy()
+        if threshold is None:
+            threshold = 1.5 if method == 'iqr' else 3.0
         
         if method == 'iqr':
             Q1 = df[column].quantile(0.25)

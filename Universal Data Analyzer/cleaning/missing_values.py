@@ -31,13 +31,16 @@ class MissingValueHandler:
             df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].median())
         
         elif strategy == 'forward_fill':
-            df[subset] = df[subset].fillna(method='ffill')
+            df[subset] = df[subset].ffill()
         
         elif strategy == 'backward_fill':
-            df[subset] = df[subset].fillna(method='bfill')
+            df[subset] = df[subset].bfill()
         
         elif strategy == 'constant':
             df[subset] = df[subset].fillna(0)
+
+        else:
+            raise ValueError(f"Unknown missing value strategy: {strategy}")
         
         logger.info(f"Missing values after handling: {df.isnull().sum().sum()}")
         return df

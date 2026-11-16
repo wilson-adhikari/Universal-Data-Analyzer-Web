@@ -2,6 +2,7 @@ import pandas as pd
 from typing import Dict
 import logging
 from datetime import datetime
+from html import escape
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,7 @@ class ReportBuilder:
         Returns:
             HTML string
         """
+        title = escape(title)
         html = f"""
         <!DOCTYPE html>
         <html>
@@ -81,8 +83,8 @@ class ReportBuilder:
         for col in df.columns:
             html += f"""
                     <tr>
-                        <td>{col}</td>
-                        <td>{df[col].dtype}</td>
+                        <td>{escape(str(col))}</td>
+                        <td>{escape(str(df[col].dtype))}</td>
                         <td>{df[col].count()}</td>
                         <td>{df[col].nunique()}</td>
                     </tr>

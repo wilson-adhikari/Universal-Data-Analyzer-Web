@@ -26,7 +26,7 @@ class SchemaDetector:
                 'sample_values': df[col].dropna().unique()[:5].tolist()
             }
             
-            if df[col].dtype in ['int64', 'float64']:
+            if pd.api.types.is_numeric_dtype(df[col]) and not pd.api.types.is_bool_dtype(df[col]):
                 schema['columns'][col]['statistics'] = {
                     'min': float(df[col].min()),
                     'max': float(df[col].max()),

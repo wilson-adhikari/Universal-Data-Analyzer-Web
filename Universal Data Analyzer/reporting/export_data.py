@@ -35,7 +35,7 @@ class DataExporter:
             orient: String indicating the format of the JSON output
         """
         try:
-            df.to_json(file_path, orient=orient, lines=True)
+            df.to_json(file_path, orient=orient, lines=(orient == 'records'))
             logger.info(f"Data exported successfully to {file_path}")
         except Exception as e:
             logger.error(f"Failed to export data to JSON: {e}")

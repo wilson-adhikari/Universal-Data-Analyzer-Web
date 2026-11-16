@@ -27,7 +27,7 @@ class ChartSelector:
                 recommendations.extend(['histogram', 'kde', 'distribution'])
         
         else:
-            if df[column].dtype in ['int64', 'float64']:
+            if pd.api.types.is_numeric_dtype(df[column]) and not pd.api.types.is_bool_dtype(df[column]):
                 if df[column].nunique() < 20:
                     recommendations = ['bar', 'histogram', 'box', 'violin']
                 else:

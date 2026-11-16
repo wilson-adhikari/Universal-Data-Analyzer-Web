@@ -17,6 +17,8 @@ class SummaryStats:
             pd.DataFrame: Summary statistics
         """
         numeric_df = df.select_dtypes(include=['number'])
+        if numeric_df.columns.empty:
+            return pd.DataFrame()
         summary = numeric_df.describe().T
         
         # Add additional statistics

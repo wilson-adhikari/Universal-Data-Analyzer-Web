@@ -10,18 +10,17 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from ingestion.csv_loader import CSVLoader
 from ingestion.excel_loader import ExcelLoader
-from ingestion.schema_detector import SchemaDetector
 from cleaning.missing_values import MissingValueHandler
 from cleaning.duplicates import DuplicateHandler
 from cleaning.type_casting import TypeCaster    
 from eda.summary_stats import SummaryStats
 from eda.distributions import DistributionAnalyzer
 from eda.correlations import CorrelationAnalyzer
+from eda.group_analysis import GroupAnalyzer
 from visualization.chart_selector import ChartSelector
 from visualization.plot_factory import PlotFactory
 from insights.text_generator import InsightGenerator
 from reporting.report_builder import ReportBuilder
-from utils.validators import DataValidator
 from utils.helpers import setup_logger
 
 # Configure page
@@ -90,45 +89,41 @@ def render_home():
     with col1:
         st.markdown("""
         ### Features
-        - **Data Ingestion**: Load CSV, Excel, SQL databases
+        - **Data Ingestion**: Load CSV and Excel files
         - **Data Cleaning**: Handle missing values, duplicates, outliers
         - **EDA**: Summary statistics, distributions, correlations
-        - **Visualization**: Automatic chart recommendations
-        - **Insights**: AI-generated text insights
+        - **Visualization**: Charts you choose from the available chart types
+        - **Insights**: Automatic text insights (rule-based)
         - **Reporting**: Export comprehensive reports
         """)
     
     with col2:
         st.markdown("""
         ### How to Use
-        1. Load your data (CSV, Excel, or SQL)
+        1. Load your data (CSV or Excel)
         2. Review and clean the data
         3. Perform exploratory data analysis
         4. Generate visualizations
         5. Extract insights
         6. Export detailed report
         
-        **Supported Formats**: CSV, Excel, SQL (MySQL, PostgreSQL, SQLite)
+        **Supported Formats**: CSV, Excel
         """)
 
 def render_data_ingestion():
     """Render data ingestion page"""
     st.markdown("<div class='section-header'>Step 1: Data Ingestion</div>", unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns(3)
-    
+    col1, col2 = st.columns(2)
+
     with col1:
         if st.button("📁 Load CSV", use_container_width=True):
             st.session_state.upload_mode = "csv"
-    
+
     with col2:
         if st.button("📊 Load Excel", use_container_width=True):
             st.session_state.upload_mode = "excel"
-    
-    with col3:
-        if st.button("🗄️ Load from SQL", use_container_width=True):
-            st.session_state.upload_mode = "sql"
-    
+
     if "upload_mode" in st.session_state:
         st.markdown("---")
         
@@ -241,7 +236,7 @@ def render_data_cleaning():
     
     with col3:
         if st.checkbox("Handle Outliers"):
-            from app.cleaning.outliers import OutlierHandler
+            from cleaning.outliers import OutlierHandler
             handler = OutlierHandler()
             numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
             col = st.selectbox("Select column", numeric_cols)
@@ -290,7 +285,10 @@ def render_eda():
         st.subheader("Summary Statistics")
         stats = SummaryStats()
         summary = stats.get_summary(df)
-        st.dataframe(summary, use_container_width=True)
+        if summary.empty:
+            st.warning("No numeric columns to summarize")
+        else:
+            st.dataframe(summary, use_container_width=True)
     
     with tab2:
         st.subheader("Distribution Analysis")
@@ -363,7 +361,7 @@ def render_insights():
         st.warning("⚠️ Please load data first")
         return
     
-    st.markdown("<div class='section-header'>Step 5: AI-Generated Insights</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-header'>Step 5: Automatic Insights (rule-based)</div>", unsafe_allow_html=True)
     
     df = st.session_state.df
     

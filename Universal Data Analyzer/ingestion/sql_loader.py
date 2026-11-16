@@ -11,11 +11,6 @@ def load_sql_table(connection_string: str, table_name: str) -> pd.DataFrame:
     Returns:
     - pd.DataFrame - The loaded DataFrame.
     """
-    try:
-        engine = sqlalchemy.create_engine(connection_string)
-        with engine.connect() as connection:
-            df = pd.read_sql_table(table_name, con=connection)
-        return df
-    except Exception as e:
-        print(f"Error loading SQL table: {e}")
-        return pd.DataFrame()
+    engine = sqlalchemy.create_engine(connection_string)
+    with engine.connect() as connection:
+        return pd.read_sql_table(table_name, con=connection)

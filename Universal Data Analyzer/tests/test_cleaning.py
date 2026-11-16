@@ -4,10 +4,10 @@ import pandas as pd
 from pathlib import Path
 import sys
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.ingestion.csv_loader import CSVLoader
-from app.ingestion.schema_detector import SchemaDetector
+from ingestion.csv_loader import CSVLoader
+from ingestion.schema_detector import SchemaDetector
 
 class TestCSVLoader:
     """Test CSV loading functionality"""
@@ -24,9 +24,9 @@ class TestCSVLoader:
     
     def test_separator_detection(self):
         """Test separator detection"""
-        separators = [',', ';', '\t', '|']
-        for sep in separators:
-            assert sep in [',', ';', '\t', '|']
+        import io
+        for sep in [',', ';', '\t', '|']:
+            assert self.loader.detect_separator(io.BytesIO(f"a{sep}b\n".encode())) == sep
 
 class TestSchemaDetector:
     """Test schema detection"""

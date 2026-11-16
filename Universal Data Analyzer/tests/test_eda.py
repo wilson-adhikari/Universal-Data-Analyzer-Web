@@ -5,10 +5,10 @@ import numpy as np
 from pathlib import Path
 import sys
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.eda.summary_stats import SummaryStats
-from app.eda.correlations import CorrelationAnalyzer
+from eda.summary_stats import SummaryStats
+from eda.correlations import CorrelationAnalyzer
 
 class TestSummaryStats:
     """Test summary statistics"""
@@ -34,8 +34,9 @@ class TestSummaryStats:
         """Test categorical summary"""
         cat_summary = self.stats.get_categorical_summary(self.df)
         
-        assert 'C' in cat_summary
-        assert 'unique_values' in cat_summary['C']
+        # The result is a table with one row per categorical column.
+        assert 'C' in cat_summary['column'].values
+        assert 'unique_values' in cat_summary.columns
 
 class TestCorrelationAnalyzer:
     """Test correlation analysis"""

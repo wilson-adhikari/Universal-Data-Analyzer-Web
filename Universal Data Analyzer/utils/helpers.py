@@ -9,8 +9,10 @@ def setup_logger(name: str, log_level=logging.INFO) -> logging.Logger:
     """Setup logger with file and stream handlers"""
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
-    
-    log_dir = Path("logs")
+    if logger.handlers:
+        return logger
+
+    log_dir = Path(__file__).parent.parent / "logs"
     log_dir.mkdir(exist_ok=True)
     
     fh = logging.FileHandler(log_dir / "app.log")
@@ -30,7 +32,7 @@ def setup_logger(name: str, log_level=logging.INFO) -> logging.Logger:
     
     return logger
 
-def load_config(config_file: str = "app/config/default.json") -> dict:
+def load_config(config_file: str = str(Path(__file__).parent.parent / "config" / "default.json")) -> dict:
     """Load configuration from JSON file"""
     try:
         with open(config_file, 'r') as f:
